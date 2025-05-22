@@ -1,0 +1,141 @@
+// Prisma schema for attendance system
+// Run `npx prisma generate` after editing
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  role         String   // admin/teacher/student
+  email        String   @unique
+  passwordHash String
+  grade        Int?
+  school       String?
+  parentName   String?
+  parentPhone  String?
+  studentNo    String?
+  createdAt    DateTime @default(now())
+  enrollments  Enrollment[]
+  // relation fields for session teacher
+  teachingSessions Session[] @relation("SessionTeacher")
+  // AttendanceRecord relations
+  attendanceRecords AttendanceRecord[] @relation("AttendanceStudent")
+  updatedAttendances AttendanceRecord[] @relation("AttendanceUpdatedBy")
+  // LeaveRequest relations
+  leaveRequests LeaveRequest[] @relation("LeaveStudent")
+  approvedLeaveRequests LeaveRequest[] @relation("LeaveApprovedBy")
+  // MakeUpSession relations
+  makeUpSessions MakeUpSession[] @relation("MakeUpStudent")
+  createdMakeUpSessions MakeUpSession[] @relation("MakeUpCreatedBy")
+  // StudentPerformance relations
+  performances StudentPerformance[] @relation("PerformanceStudent")
+  createdPerformances StudentPerformance[] @relation("PerformanceCreatedBy")
+}
+
+
+model Course {
+  id        Int      @id @default(autoincrement())
+  name      String
+  level     String?
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime @default(now())
+  enrollments Enrollment[]
+  sessions    Session[]
+}
+
+model Enrollment {
+  id        Int    @id @default(autoincrement())
+  course    Course @relation(fields: [courseId], references: [id])
+  courseId  Int
+  student   User   @relation(fields: [studentId], references: [id])
+  studentId Int
+}
+
+model Session {
+  id         Int      @id @default(autoincrement())
+  course     Course   @relation(fields: [courseId], references: [id])
+  courseId   Int
+  sessionDate DateTime
+  startTime   String
+  endTime     String
+  teacher     User?    @relation("SessionTeacher", fields: [teacherId], references: [id])
+  teacherId   Int?
+  content     String?
+  attendanceRecords AttendanceRecord[]
+  performances      StudentPerformance[]
+  leaveRequests    LeaveRequest[]
+  makeUpSessions   MakeUpSession[] @relation("OriginalSession")
+}
+
+
+model AttendanceRecord {
+  id         Int      @id @default(autoincrement())
+  session    Session  @relation(fields: [sessionId], references: [id])
+  sessionId  Int
+  student    User     @relation("AttendanceStudent", fields: [studentId], references: [id])
+  studentId  Int
+  status     String   // 已到/缺課/請假/補課
+  note       String?
+  updatedBy  User     @relation("AttendanceUpdatedBy", fields: [updatedById], references: [id])
+  updatedById Int
+  updatedAt  DateTime @updatedAt
+
+  @@unique([sessionId, studentId])
+}
+
+
+model LeaveRequest {
+  id         Int      @id @default(autoincrement())
+  session    Session  @relation(fields: [sessionId], references: [id])
+  sessionId  Int
+  student    User     @relation("LeaveStudent", fields: [studentId], references: [id])
+  studentId  Int
+  reason     String
+  status     String   // pending/approved/rejected
+  approvedBy User?    @relation("LeaveApprovedBy", fields: [approvedById], references: [id])
+  approvedById Int?
+  approvedAt  DateTime?
+  createdAt   DateTime @default(now())
+  makeUps     MakeUpSession[]
+}
+
+
+model MakeUpSession {
+  id         Int      @id @default(autoincrement())
+  originalSession   Session   @relation("OriginalSession", fields: [originalSessionId], references: [id])
+  originalSessionId Int
+  student    User     @relation("MakeUpStudent", fields: [studentId], references: [id])
+  studentId  Int
+  makeUpDate DateTime
+  startTime  String
+  endTime    String
+  attendanceStatus String // 已到/缺課
+  content         String?
+  createdBy      User     @relation("MakeUpCreatedBy", fields: [createdById], references: [id])
+  createdById    Int
+  createdAt      DateTime @default(now())
+  leaveRequest   LeaveRequest? @relation(fields: [leaveRequestId], references: [id])
+  leaveRequestId Int?
+}
+
+
+model StudentPerformance {
+  id         Int      @id @default(autoincrement())
+  session    Session  @relation(fields: [sessionId], references: [id])
+  sessionId  Int
+  student    User     @relation("PerformanceStudent", fields: [studentId], references: [id])
+  studentId  Int
+  performance String
+  createdBy  User     @relation("PerformanceCreatedBy", fields: [createdById], references: [id])
+  createdById Int
+  createdAt  DateTime @default(now())
+}
+

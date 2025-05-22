@@ -1,0 +1,30 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
+const dotenv_1 = __importDefault(require("dotenv"));
+const auth_1 = __importDefault(require("./routes/auth"));
+const users_1 = __importDefault(require("./routes/users"));
+const courses_1 = __importDefault(require("./routes/courses"));
+const sessions_1 = __importDefault(require("./routes/sessions"));
+const attendance_1 = __importDefault(require("./routes/attendance"));
+const leave_1 = __importDefault(require("./routes/leave"));
+const makeup_1 = __importDefault(require("./routes/makeup"));
+dotenv_1.default.config();
+const app = (0, express_1.default)();
+app.use((0, cors_1.default)());
+app.use(express_1.default.json());
+app.get('/', (req, res) => {
+    res.send('Attendance System API');
+});
+app.use('/api/auth', auth_1.default);
+app.use('/api/users', users_1.default);
+app.use('/api/courses', courses_1.default);
+app.use('/api/sessions', sessions_1.default);
+app.use('/api/attendance', attendance_1.default);
+app.use('/api/leave', leave_1.default);
+app.use('/api/makeup', makeup_1.default);
+exports.default = app;
