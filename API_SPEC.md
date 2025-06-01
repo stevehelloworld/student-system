@@ -4,38 +4,66 @@
 
 ---
 
+## API 權限說明
+- Admin：系統管理員
+- Teacher：教師
+- Student：學生
+
+---
+
 ## 認證
 
 ### POST /api/auth/login
+- 權限：所有角色
 - 說明：使用者登入
 - 輸入：{ email, password }
-- 回傳：{ token }
+- 回傳：{ success, token } 或 { success: false, error: "Invalid credentials" }
 
 ---
 
 ## 使用者
 
 ### GET /api/users/me
+- 權限：所有登入者
 - 說明：取得目前登入者資訊
-- 回傳：{ id, name, role, email }
+- 回傳：{ success, data: { id, name, role, email } } 或 { success: false, error }
 
 ### GET /api/users
-- 說明：Admin/Teacher 查詢所有使用者（需權限）
-- 回傳：[{ id, name, role, email, grade, school, parent_name, parent_phone, student_no }]
+- 權限：Admin, Teacher
+- 說明：查詢所有使用者
+- 回傳：{ success, data: [ ... ] } 或 { success: false, error }
 
 ### POST /api/users
-- 說明：Admin/Teacher 新增學生
+- 權限：Admin, Teacher
+- 說明：新增學生
 - 輸入：{ name, email, password, role, grade, school, parent_name, parent_phone, student_no, enroll_courses: [course_id, ...] }
-- 回傳：{ success, id }
+- 回傳：{ success, id } 或 { success: false, error }
 
 ### PUT /api/users/:userId
-- 說明：Admin/Teacher 編輯學生資料
+- 權限：Admin, Teacher
+- 說明：編輯學生資料
 - 輸入：{ name, email, grade, school, parent_name, parent_phone, student_no, enroll_courses }
-- 回傳：{ success }
+- 回傳：{ success } 或 { success: false, error }
 
 ### DELETE /api/users/:userId
-- 說明：Admin/Teacher 刪除學生
-- 回傳：{ success }
+- 權限：Admin, Teacher
+- 說明：刪除學生
+- 回傳：{ success } 或 { success: false, error }
+
+---
+
+## 複雜業務流程補充
+
+### 請假流程
+1. 學生於規定時間內申請請假（事假/病假），系統自動成立。
+2. 學生可於截止前取消請假。
+3. 教師可隨時為學生登記、修改、刪除請假，並可覆寫學生紀錄。
+4. 請假紀錄自動同步至出勤紀錄。
+
+### 補課流程
+1. 學生請假後，教師可安排補課，並通知學生。
+2. 補課當日，教師記錄學生補課出席狀態（已到/缺課/遲到）。
+3. 補課出席狀態納入總出勤統計。
 
 ---
 

@@ -35,13 +35,6 @@
 - 申請請假（事假/病假），無需老師審核，並可於截止時間前取消。
 - 查詢補課安排與補課出席狀態。
 
-### 教師
-- 為每堂課的學生標記出勤狀態（已到/缺課/請假）。
-- 一次批次標記多位學生的出勤狀態。
-- 查詢每堂課所有學生的出勤狀態，並可匯出報表（如 CSV）。
-- 隨時為學生登記、修改或刪除請假（不受申請截止時間限制）。
-- 安排學生補課，並記錄補課出席狀態。
-
 ---
 
 ## 班級等級與命名規則
@@ -140,14 +133,13 @@
 如需調整或補充功能，請隨時提出！
 
 ## 專案結構
-attendance-system-zh-tw/
+student-system/
   README.md
-  db_schema.md
-  system_design.md
-  api_spec.md
+  DB_SCHEMA.md
+  SYSTEM_DESIGN.md
+  API_SPEC.md
   backend/   # 後端服務
   frontend/  # 前端應用
-```
 
 ## 主要功能
 - 學生：查詢出勤紀錄、申請請假（事假/病假）、查詢補課安排與出席狀態
@@ -160,9 +152,9 @@ attendance-system-zh-tw/
 
 ## 文件說明
 - `README.md`：專案說明
-- `db_schema.md`：資料庫設計
-- `system_design.md`：系統設計
-- `api_spec.md`：API 規格
+- `DB_SCHEMA.md`：資料庫設計
+- `SYSTEM_DESIGN.md`：系統設計
+- `API_SPEC.md`：API 規格
 
 ---
 
@@ -186,9 +178,15 @@ npm start
 ```
 
 ### 4. 開發與部署
-- 詳細請參閱 `system_design.md` 與 `api_spec.md`
+- 詳細請參閱 `SYSTEM_DESIGN.md` 與 `API_SPEC.md`
 
 ---
 
 ## 聯絡方式
 如需協助或有建議，請聯絡專案維護者。
+
+## 行動裝置友善設計
+- 前端採用 RWD 響應式設計，支援手機、平板、桌機。
+- 主要操作流程（如請假、查詢出勤）皆可於行動裝置順暢完成。
+- 推薦使用 PWA 技術，讓 Web App 可安裝於手機桌面。
+- 重要通知（如補課、缺課）可整合推播服務。

@@ -38,6 +38,8 @@
 | course_id    | int (FK)     | 課程ID       |
 | student_id   | int (FK)     | 學生ID       |
 
+> **索引**：UNIQUE (course_id, student_id) 避免重複選課
+
 ### 4. sessions（上課場次）
 | 欄位         | 型態         | 說明         |
 |--------------|--------------|--------------|
@@ -55,10 +57,12 @@
 | id           | int (PK)     | 編號         |
 | session_id   | int (FK)     | 場次ID       |
 | student_id   | int (FK)     | 學生ID       |
-| status       | enum         | 狀態（已到/缺課/請假/補課）|
+| status       | enum         | 狀態（已到/缺課/請假/補課/遲到）|
 | note         | varchar      | 備註         |
 | updated_by   | int (FK)     | 操作者ID     |
 | updated_at   | timestamp    | 更新時間     |
+
+> **建議**：如請假/補課規則複雜，可考慮拆分為 leave_status, make_up_status 等欄位
 
 ### 6. leave_requests（請假申請）
 | 欄位         | 型態         | 說明         |
@@ -81,7 +85,7 @@
 | make_up_date | date         | 補課日期     |
 | start_time   | time         | 開始時間     |
 | end_time     | time         | 結束時間     |
-| attendance_status | enum      | 補課出席狀態（已到/缺課）|
+| attendance_status | enum      | 補課出席狀態（已到/缺課/遲到）|
 | created_by   | int (FK)     | 安排人ID     |
 | created_at   | timestamp    | 建立時間     |
 
@@ -92,6 +96,8 @@
 | session_id   | int (FK)     | 場次ID       |
 | student_id   | int (FK)     | 學生ID       |
 | performance  | text         | 學生課堂表現紀錄 |
+| score        | int/null     | 分數（可選） |
+| grade        | varchar/null | 等級（如A/B/C，選填）|
 | created_by   | int (FK)     | 評分者ID     |
 | created_at   | timestamp    | 建立時間     |
 
